@@ -1,57 +1,62 @@
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const path = require('path');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
-    mode: "development",
-    entry: "./src/js/index.js",
+    mode: 'development',
+    entry: './src/js/app.js',
     output: {
-        filename: "[name].js",
-        path: path.resolve(__dirname, "dist")
+        filename: '[name].js',
+        path: path.resolve(__dirname, 'dist')
     },
-    //   optimization: {
-    //     splitChunks: {
-    //         chunks: 'all'
-    //     }
-    //   },
     devServer: {
-        contentBase: "./dist"
+        contentBase: './dist'
     },
     module: {
         rules: [
             {
-                test: /\.m?js$/,
+                test: /\.js$/,
                 exclude: /(node_modules|bower_components)/,
                 use: {
-                    loader: "babel-loader",
+                    loader: 'babel-loader',
                     options: {
-                        presets: ["@babel/preset-env"]
+                        presets: ['@babel/preset-env']
                     }
                 }
             },
             {
-                test: /\.(sa|sc|c)ss$/,
+                test: /\.scss$/,
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: ['css-loader', 'sass-loader']
+                })
+            },
+            {
+                test: /\.html$/,
+                use: ['html-loader']
+            },
+            {
+                test: /\.(png|svg|jpg|jpeg|gif)$/,
                 use: [
                     {
-                        loader: MiniCssExtractPlugin.loader,
+                        loader: 'file-loader',
                         options: {
-                            hmr: process.env.NODE_ENV === 'development'
+                            name: '[name].[ext]',
+                            outputPath: 'assets/',
+                            // publicPath: 'assets/'
                         }
-                    },
-                    'css-loader',
-                    'sass-loader'
+                    }
                 ]
-            }
+            },
         ]
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: "src/index.html"
+            template: 'src/index.html'
         }),
-        new MiniCssExtractPlugin({
-            filename: '[name].css',
-            chunkFiles: '[id].css'
+        new ExtractTextPlugin({
+            filename: 'main.css'
         }),
         new CleanWebpackPlugin()
     ]

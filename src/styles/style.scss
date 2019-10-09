@@ -6,3 +6,9 @@ body {
     background-color: $bg-col;
 }
 
+.test {
+    height: 300px;
+    width: 400px;
+    background-image: url('./../assets/images/image3.jpeg');
+    background-size: cover;
+}
